@@ -1,8 +1,22 @@
 name: CI 
-
-on: [push]
-
+on: 
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 jobs:
+  secret_scans:
+    name: Gitleaks Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code 
+      uses: actions/checkout@v2
+      
+    - name: Gitleaks scan
+      uses: gitleaks/gitleaks-action@v2.3.4
+
+      
   sast_scans:
     name: Run Bandit Scan
     runs-on: ubuntu-latest
