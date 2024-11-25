@@ -8,7 +8,6 @@ jobs:
   secret_scans:
     name: Gitleaks Scan
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code 
       uses: actions/checkout@v2
@@ -16,10 +15,33 @@ jobs:
     - name: Gitleaks scan
       uses: gitleaks/gitleaks-action@v2.3.4
 
-      
-  sast_scans:
+  semgrep_scans:
+    name: Run Semgrep Scan
+    runs-on: ubuntu-latest
+    container:
+      image: returntocorp/semgrep
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+      - name: checkout
+        id: checkout
+        uses: actions/checkout@v3
+      - name: semgrep scan
+        id: semgrep-scan
+        run: |
+          mkdir -p semgrep/results
+          semgrep --config auto --error --json --output=semgrep/results/semgrep.json
+      - name: upload semgrep results
+        id: upload-semgrep-results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: semgrep-results
+          path: semgrep/results/
+
+  bandit_scans:
     name: Run Bandit Scan
     runs-on: ubuntu-latest
+    needs: secret_scans
 
     steps:
     - name: Checkout code 
