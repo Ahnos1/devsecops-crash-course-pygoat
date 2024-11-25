@@ -41,7 +41,7 @@ jobs:
   bandit_scans:
     name: Run Bandit Scan
     runs-on: ubuntu-latest
-    needs: secret_scans
+    # needs: secret_scans
 
     steps:
     - name: Checkout code 
